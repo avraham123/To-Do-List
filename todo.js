@@ -9,6 +9,7 @@ inputTodo.addEventListener('keypress', (event) => {
     addToDo();
   }
 });
+
 function noTask() {
   if (toDoList.innerHTML == '') {
     let emptyTask = document.createElement('div');
@@ -17,15 +18,18 @@ function noTask() {
     toDoList.appendChild(emptyTask);
   }
 }
+
 function removeNoTask() {
   if (document.getElementById('empty')) {
     document.getElementById('empty').remove();
   }
 }
+
 function addLoader() {
   if (createBtn.classList.contains('loader')) return;
   createBtn.classList.add('loader');
 }
+
 function removeLoader() {
   createBtn.classList.remove('loader');
 }
@@ -53,23 +57,39 @@ function addToDo() {
   let btnContainer = document.createElement('div');
   btnContainer.classList.add('btn-container');
   let toDoEdit = document.createElement('button');
-  
   let toDoDelete = document.createElement('button');
+  let toDoFavorite = document.createElement('button'); // create favorite button
   toDoText.value = val;
   inputTodo.value = '';
   toDoEdit.innerHTML = `<i class="fas fa-edit"></i>`;
-  
   toDoDelete.innerHTML = `<i class='fa fa-trash' aria-hidden='true'></i>`;
+  toDoFavorite.innerHTML = `<i class='fa fa-star' aria-hidden='true'></i>`; // add star icon to favorite button
+  toDoFavorite.classList.add('favorite-btn');
 
+  // On hover
+  toDoItem.addEventListener('mouseover', () => {
+    toDoItem.appendChild(toDoFavorite);
+  });
+  
+
+  
   toDoEdit.addEventListener('click', () => {
     toDoText.removeAttribute('readonly');
     toDoText.focus();
   });
+
   toDoDelete.addEventListener('click', () => {
     toDoItem.remove();
     noTask();
   });
-  
+
+  toDoFavorite.addEventListener('click', () => { // handle favorite button click event
+    toDoItem.classList.add('favorite');
+    
+    toDoList.insertBefore(toDoItem, toDoList.firstChild); // move li element to top of list
+    toDoFavorite.remove();
+  });
+
   toDoText.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       readOnly();
@@ -79,17 +99,23 @@ function addToDo() {
   function readOnly() {
     toDoText.setAttribute('readonly', 'readonly');
   }
+
+
+
   setTimeout(() => {
     toDoItem.appendChild(toDoText);
     btnContainer.appendChild(toDoDelete);
+    btnContainer.appendChild(toDoFavorite);
     btnContainer.appendChild(toDoEdit);
-    
 
     toDoItem.appendChild(btnContainer);
     toDoList.appendChild(toDoItem);
     removeNoTask();
     removeLoader();
+
+    toDoFavorite.addEventListener('click', () => {
+      toDoItem.classList.add('favorite');
+      toDoList.insertBefore(toDoItem, toDoList.firstChild);
+    });
   }, 800);
 }
-
-createBtn.addEventListener('click', addToDo);
